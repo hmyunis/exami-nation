@@ -1,4 +1,4 @@
-package com.exam.backend;
+package org.estifanos.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
