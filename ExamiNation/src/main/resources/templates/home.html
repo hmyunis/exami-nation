@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="https://picsum.photos/100" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ExamiNation | Home</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-zinc-700 min-h-screen">
+        <nav class="bg-zinc-800 text-white px-16 py-4 flex justify-between items-center">
+            <ul class="flex gap-8 items-center">
+                <li><a class="text-xl font-light hover:text-blue-500" href="/">ExamiNation</a></li>
+            </ul>
+
+            <div class="space-x-4" sec:authorize="!isAuthenticated()">
+                <a href="/">
+                    <button
+                        class="bg-gray-200 text-blue-800 hover:bg-white text-sm px-4 rounded-full py-2"
+                    >
+                        Go to website
+                    </button>
+                </a>
+                <a href="/logout">
+                    <button
+                        class="text-gray-200 bg-red-600 hover:bg-red-500 text-sm px-6 rounded-full py-2"
+                    >
+                        Log out
+                    </button>
+                </a>
+            </div>
+
+            <div class="space-x-4 flex" sec:authorize="isAuthenticated()">
+                <a href="/">
+                    <button
+                        class="bg-gray-200 text-blue-800 hover:bg-white text-sm px-4 rounded-full py-2"
+                    >
+                        Go to website
+                    </button>
+                </a>
+                <form action="/logout" method="post">
+                    <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}"
+                    />
+                    <button
+                        type="submit"
+                        class="text-gray-200 bg-red-600 hover:bg-red-500 text-sm px-6 rounded-full py-2"
+                    >
+                        Log out
+                    </button>
+                </form>
+            </div>
+        </nav>
+        <main class="flex w-full">
+            <nav class="w-1/5 min-h-screen bg-zinc-900">
+                <ul>
+                    <li
+                        class="bg-zinc-700 rounded-s-full text-lg text-white font-semibold pl-8 p-4 mr-0 m-2"
+                    >
+                        <a class="size-full block" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li
+                        class="bg-zinc-100 rounded-s-full text-lg hover:bg-zinc-400 pl-8 p-4 m-2 mr-0"
+                    >
+                        <a class="size-full block" href="/">History</a>
+                    </li>
+                </ul>
+            </nav>
+            <article class="w-4/5 p-12">
+                <h1 class="text-6xl text-center text-slate-100">Welcome to ExamiNation!</h1>
+            </article>
+        </main>
+    </body>
+</html>

@@ -1,29 +1,33 @@
-# ExamiNation: Revolutionized School Examination System
+# ExamiNation: School Examination System
 
 ## Overview
-**ExamiNation** is an innovative platform designed to streamline the examination process for educational institutions. By integrating a robust REST API backend powered by Spring and a dynamic frontend built with React.js and Tailwind CSS, ExamiNation enhances the efficiency and engagement of assessments for both educators and students.
-
-## Features
-- **User-Friendly Interface**: Designed with React.js and Tailwind CSS for a responsive and intuitive user experience.
-- **RESTful API**: Developed using Spring, providing seamless communication between the frontend and backend.
-- **Exam Creation and Management**: Easily create, administer, and track examinations.
-- **Real-Time Feedback**: Instant results and feedback for students to enhance learning outcomes.
-- **Performance Tracking**: Monitor student progress and performance over time.
+**ExamiNation** is a platform designed to simplify the examination process for educational institutions. It has role based authentication to display two separate views for teachers and students.
 
 ## Technologies Used
-- **Frontend**: 
-  - React.js
-  - Tailwind CSS
-- **Backend**: 
-  - Spring Framework
-  - Spring Boot
-  - REST API
+
+### Backend
+- **Spring Boot**: Backend framework for building the application.
+- **Spring Security**: For authentication and authorization.
+- **Spring Data JPA**: For database interaction.
+- **Thymeleaf**: For server-side rendering of HTML views.
+- **Hibernate**: ORM tool for interacting with the database.
+- **Maven**: Build and dependency management tool.
+
+### Database
+- **MySQL**: Relational database for data persistence.
+
+### Frontend
+- **Bootstrap**: CSS framework for styling and responsive design.
+- **Tailwind CSS**: CSS framework for styling.
+- **HTML5 & CSS3**: For creating views rendered by Thymeleaf.
+
+### Deployment & Build
+- **Embedded Tomcat Server**: Comes with Spring Boot for running the application locally.
 
 ## Getting Started
 
 ### Prerequisites
 - Java 11 or higher
-- Node.js and npm
 - Maven
 
 ### Installation
@@ -48,17 +52,8 @@
      mvn spring-boot:run
      ```
 
-3. **Frontend Setup**
-   - Navigate to the frontend directory:
+3. **Launch**
+   - Open your browser and search:
      ```bash
-     cd frontend
+     http://localhost:8080/
      ```
-   - Install dependencies:
-     ```bash
-     npm install
-     ```
-   - Start the React application:
-     ```bash
-     npm run dev
-     ```
-
