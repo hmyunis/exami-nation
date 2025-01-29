@@ -36,6 +36,14 @@ public class ExamService {
         return examRepository.findByStatus(status);
     }
 
+    public void updateStatusById(String status, Long id) {
+        Optional<Exam> exam = getExamById(id);
+        if (exam.isPresent()) {
+            exam.get().setStatus(status);
+            saveExam(exam.get());
+        }
+    }
+
     // Delete
     public void deleteExam(Long id) {
         examRepository.deleteById(id);

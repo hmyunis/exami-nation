@@ -9,18 +9,23 @@
         <!-- Define the HTML block to pass -->
         <div style="display: none">
             <main id="myContent">
+              <a th:href="@{'/teacher/exams'}" class="mb-6 block text-blue-700 hover:text-blue-500"><span class="-mt-1">&larr;</span> Go back</a>
               <h1 class="text-3xl">Exam <span class="text-blue-500">#</span><span class="text-blue-500" th:text="${exam.id}">123</span></h1>
             <section class="border-2 w-full lg:w-2/3 border-gray-400 my-8 p-4 rounded-lg">
               <h2 class="text-lg text-gray-400 font-mono bg-white -mt-8 w-fit px-4">Details</h2>
               <table class="w-full m-2">
                 <tbody>
                     <tr>
+                        <td class="font-semibold">Title:</td>
+                        <td class="font-normal text-blue-800" th:text="${exam.title}">Mid Exam</td>
+                    </tr>
+                    <tr>
                         <td class="font-semibold">Status:</td>
                         <td class="font-normal uppercase" th:text="${exam.status}" th:classappend="${exam.status == 'PUBLISHED' ? 'text-green-600' : 'text-red-600'}">UNPUBLISHED</td>
                     </tr>
                     <tr>
                         <td class="font-semibold">No. of questions:</td>
-                        <td class="font-normal text-blue-800">30</td>
+                        <td class="font-normal text-blue-800" th:text="${exam.totalQuestions}">30</td>
                     </tr>
                     <tr>
                         <td class="font-semibold">Weight:</td>
@@ -47,22 +52,28 @@
                     <div class="absolute inset-0 flex items-center justify-center">
                         <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
                             <h2 class="text-lg font-semibold mb-4">Edit Exam</h2>
-                            <form>
+                            <form th:action="@{'/teacher/exams/' + ${exam.id} + '/edit'}" method="post">
                                 <table class="w-full">
                                     <tbody>
                                         <tr>
+                                            <td class="font-semibold">Title:</td>
+                                            <td class="font-normal">
+                                                <input name="title" type="text" th:value="${exam.title}" placeholder="Title" class="border rounded-lg px-2 py-1 w-full" />
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td class="font-semibold">Status:</td>
                                             <td class="font-normal">
-                                                <select class="border rounded-lg px-2 py-1 w-full">
-                                                    <option value="active">Active</option>
-                                                    <option value="inactive">Inactive</option>
+                                                <select name="status" class="border rounded-lg px-2 py-1 w-full">
+                                                    <option value="PUBLISHED" th:selected="${exam.status == 'PUBLISHED'}">Publish</option>
+                                                    <option value="DRAFT" th:selected="${exam.status == 'DRAFT'}">Draft</option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="font-semibold">Weight:</td>
                                             <td class="font-normal">
-                                                <input type="number" min="0" max="100" value="20" class="border rounded-lg px-2 py-1 w-full" />
+                                                <input name="weight" type="number" placeholder="Weight" min="0" max="100" th:value="${exam.weight}" class="border rounded-lg px-2 py-1 w-full" />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -76,53 +87,70 @@
                     </div>
                   </div>
 
-                   <a class="underline underline-offset-2 hover:text-red-500 text-red-600" href="">
-                      <svg class="size-4 inline -mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                         <path fill="#eb0000" d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/>
-                      </svg>
-                      Delete
-                   </a>
+                  <a th:href="@{'/teacher/exams/' + ${exam.id} + '/delete'}" class="underline underline-offset-2 hover:text-red-400 text-red-600">
+                    <svg class="size-4 inline -mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                       <path fill="#eb0000" d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/>
+                    </svg>
+                    Delete
+                 </a>
                 </div>
-                <a href="#" class="bg-green-500 font-medium hover:bg-green-600 px-6 py-2 text-white rounded-full">Publish</a>
+                <a 
+                    th:href="${exam.status == 'DRAFT'} ? '/teacher/publish/' + ${exam.id} + '/exam-detail' : '/teacher/unpublish/' + ${exam.id} + '/exam-detail'"
+                    class="font-medium px-6 py-2 text-white rounded-full"
+                    th:classappend="${exam.status == 'DRAFT'} ? 'bg-green-600 hover:bg-green-500' : 'bg-red-600 hover:bg-red-500'"
+                    th:text="${exam.status == 'DRAFT'} ? 'Publish' : 'Stop'"
+                >
+                    Publish
+                </a>
               </div>
             </section>
             <section class="border-2 border-gray-400 my-8 p-4 rounded-lg">
               <h2 class="text-lg text-gray-400 font-mono bg-white -mt-8 w-fit px-4">Questions</h2>
               <article class="space-y-4">
-                <button onclick="document.getElementById('createQuestionModal').style.display = 'block';" class="w-fit ml-auto bg-green-500 flex items-center font-medium hover:bg-green-600 px-5 py-2 text-white rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline">
-                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                  </svg>
-                   Add question
-               </button>
+                <div class="flex justify-end mt-2 gap-2">
+                    <a th:if="${exam.questions.size() > 0}" th:href="@{'/teacher/exams/' + ${exam.id} + '/questions'}">
+                        <button class="w-fit bg-blue-500 flex items-center font-medium hover:bg-blue-600 px-5 py-2 text-white rounded-full">
+                            <svg class="w-5 h-5 fill-current mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                                <path fill="#ffffff" d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z"/>
+                            </svg>
+                            View All
+                        </button>
+                    </a>
+                    <button onclick="document.getElementById('createQuestionModal').style.display = 'block';" class="w-fit bg-green-500 flex items-center font-medium hover:bg-green-600 px-5 py-2 text-white rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline">
+                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                      </svg>
+                       Add question
+                    </button>
+                </div>
 
                <!-- Create Question Modal -->
               <div id="createQuestionModal" class="fixed inset-0 bg-black bg-opacity-50" style="display: none;">
                 <div class="absolute inset-0 flex items-center justify-center">
-                    <form method="post" class="mx-auto mt-8 p-4 border rounded-lg shadow-md bg-white w-1/3">
+                    <form th:action="@{'/teacher/questions/' + ${exam.id}}" method="post" class="mx-auto mt-8 p-4 border rounded-lg shadow-md bg-white w-1/3">
                         <h3 class="text-lg mb-4">Create Question</h3>
                         
                         <label for="question" class="block text-sm font-medium text-gray-700">Question:</label>
-                        <textarea id="question" placeholder="Enter question here..." class="block mt-2 w-full placeholder-gray-400/70 rounded-lg border border-gray-300 bg-white px-4 h-32 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"></textarea>
+                        <textarea required name="content" id="question" placeholder="Enter question here..." class="block mt-2 w-full placeholder-gray-400/70 rounded-lg border border-gray-300 bg-white px-4 h-32 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"></textarea>
                     
                         <fieldset class="mt-4">
                             <legend class="block text-sm font-medium text-gray-700">Options:</legend>
                             <div class="grid grid-cols-1 gap-4 mt-2">
                                 <div class="flex items-center">
-                                    <input type="text" id="optionA" name="optionA" placeholder="Option A" class="border rounded-lg px-2 py-1 w-full"/>
-                                    <input type="radio" id="correctA" name="correctAnswer" value="optionA" class="ml-2"/>
+                                    <input required type="text" id="optionA" name="option1" placeholder="Option A" class="border rounded-lg px-2 py-1 w-full"/>
+                                    <input required type="radio" id="correctA" name="correctAnswer" value="1" class="ml-2"/>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="text" id="optionB" name="optionB" placeholder="Option B" class="border rounded-lg px-2 py-1 w-full"/>
-                                    <input type="radio" id="correctB" name="correctAnswer" value="optionB" class="ml-2"/>
+                                    <input required type="text" id="optionB" name="option2" placeholder="Option B" class="border rounded-lg px-2 py-1 w-full"/>
+                                    <input type="radio" id="correctB" name="correctAnswer" value="2" class="ml-2"/>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="text" id="optionC" name="optionC" placeholder="Option C" class="border rounded-lg px-2 py-1 w-full"/>
-                                    <input type="radio" id="correctC" name="correctAnswer" value="optionC" class="ml-2"/>
+                                    <input required type="text" id="optionC" name="option3" placeholder="Option C" class="border rounded-lg px-2 py-1 w-full"/>
+                                    <input type="radio" id="correctC" name="correctAnswer" value="3" class="ml-2"/>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="text" id="optionD" name="optionD" placeholder="Option D" class="border rounded-lg px-2 py-1 w-full"/>
-                                    <input type="radio" id="correctD" name="correctAnswer" value="optionD" class="ml-2"/>
+                                    <input required type="text" id="optionD" name="option4" placeholder="Option D" class="border rounded-lg px-2 py-1 w-full"/>
+                                    <input type="radio" id="correctD" name="correctAnswer" value="4" class="ml-2"/>
                                 </div>
                             </div>
                         </fieldset>
@@ -137,43 +165,45 @@
 
                
 
-               <div class="bg-gradient-to-br from-gray-50 border border-gray-300 to-gray-100 rounded-xl p-4 flex justify-between items-start gap-4 mt-4">
+               <div th:each="question, iterStat : ${exam.questions}" class="bg-gradient-to-br from-gray-50 border border-gray-300 to-gray-100 rounded-xl p-4 flex justify-between items-start gap-4 mt-4">
                     <div class="flex-1">
-                        <h3 class="text-lg">Question 1</h3>
-                        <p class="text-gray-500">What is the capital of France?</p>
+                        <h3 class="text-lg">Question <span th:text="${iterStat.count}"></span></h3>
+                        <p class="text-gray-500" th:text="${question.content}">What is the capital of France?</p>
                         <form>
                             <div class="grid grid-cols-2 gap-4 mt-4">
                                 <div>
-                                    <input type="radio" id="optionA" name="capital" value="Berlin" disabled>
-                                    <label for="optionA">Berlin</label>
+                                    <input type="radio" id="optionA" name="capital" value="1" th:checked="${question.correctAnswer == 1}" disabled>
+                                    <label for="optionA" th:text="${question.option1}">Berlin</label>
                                 </div>
                                 <div>
-                                    <input type="radio" id="optionB" name="capital" value="Madrid" disabled>
-                                    <label for="optionB">Madrid</label>
+                                    <input type="radio" id="optionB" name="capital" value="2" th:checked="${question.correctAnswer == 2}" disabled>
+                                    <label for="optionB" th:text="${question.option2}">Madrid</label>
                                 </div>
                                 <div>
-                                    <input type="radio" id="optionC" name="capital" value="Paris" checked disabled>
-                                    <label for="optionC">Paris</label>
+                                    <input type="radio" id="optionC" name="capital" value="3" th:checked="${question.correctAnswer == 3}" disabled>
+                                    <label for="optionC" th:text="${question.option3}">Paris</label>
                                 </div>
                                 <div>
-                                    <input type="radio" id="optionD" name="capital" value="Rome" disabled>
-                                    <label for="optionD">Rome</label>
+                                    <input type="radio" id="optionD" name="capital" value="4" th:checked="${question.correctAnswer == 4}" disabled>
+                                    <label for="optionD" th:text="${question.option4}">Rome</label>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="flex items-center gap-4">
-                        <a th:href="@{'/teacher/exams/' + ${exam.id} + '/questions/1'}" class="underline underline-offset-2 hover:text-blue-400 text-blue-600">
+                        <a th:href="@{'/teacher/exams/' + ${exam.id} + '/questions/' + ${question.id}}" class="underline underline-offset-2 hover:text-blue-400 text-blue-600">
                             <svg class="size-4 inline -mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 <path fill="#026ec0" d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152L0 424c0 48.6 39.4 88 88 88l272 0c48.6 0 88-39.4 88-88l0-112c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 112c0 22.1-17.9 40-40 40L88 464c-22.1 0-40-17.9-40-40l0-272c0-22.1 17.9-40 40-40l112 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L88 64z"/>
                             </svg>
                             Edit
                         </a>
-                        <a class="underline underline-offset-2 hover:text-red-500 text-red-600" href="">
-                            <svg class="size-4 inline -mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="#eb0000" d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/>
-                            </svg>
-                            Delete
+                        <a th:href="@{'/teacher/questions/' + ${question.id} + '/delete'}">
+                            <button class="underline underline-offset-2 hover:text-red-500 text-red-600">
+                                <svg class="size-4 inline -mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                    <path fill="#eb0000" d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/>
+                                </svg>
+                                Delete
+                            </button>
                         </a>
                     </div>
                 </div>

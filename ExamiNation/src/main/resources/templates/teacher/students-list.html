@@ -41,10 +41,12 @@
                             <td class="px-6 py-4" th:text="${student.fullName}">John Doe</td>
                             <td class="px-6 py-4" th:text="${student.email}">john@example.com</td>
                             <td class="px-6 py-4 text-blue-800" th:text="${student.username}">johndoe</td>
-                            <td class="px-6 py-4">86</td>
+                            <td class="px-6 py-4" th:text="${student.totalMarks} + '%' ">99</td>
                             <td class="px-6 py-4" th:text="${student.dateJoined}">01/01/2022</td>
                             <td class="px-6 py-4">
-                                <button class="text-red-600 hover:underline" onclick="deleteRow(this)">Delete Account</button>
+                                <form class="inline" th:action="@{'/teacher/students/' + ${student.id} + '/delete'}" method="post">
+                                    <button type="submit" class="text-red-600 hover:underline">Delete Account</button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>
@@ -65,11 +67,6 @@
                             row.style.display = 'none';
                         }
                     });
-                }
-            
-                function deleteRow(button) {
-                    const row = button.closest('tr');
-                    row.remove();
                 }
             </script>
             </main>

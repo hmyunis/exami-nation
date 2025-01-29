@@ -1,6 +1,8 @@
 package com.project.ExamiNation.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -30,6 +32,9 @@ public class Exam {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
+    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions = new ArrayList<>();
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -45,5 +50,17 @@ public class Exam {
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
     public User getCreatedBy() { return createdBy; }
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
+    public List<Question> getQuestions() { return questions; }
+    public void setQuestions(List<Question> questions) { this.questions = questions; }
 
+    // Helper method to manage bidirectional relationship
+    public void addQuestion(Question question) {
+        questions.add(question);
+        question.setExam(this);
+    }
+
+    public void removeQuestion(Question question) {
+        questions.remove(question);
+        question.setExam(null);
+    }
 }

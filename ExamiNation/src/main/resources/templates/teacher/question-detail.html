@@ -10,39 +10,41 @@
         <div style="display: none">
             <main id="myContent">
               <a th:href="@{'/teacher/exams/' + ${question.id}}" class="mb-6 block text-blue-700 hover:text-blue-500"><span class="-mt-1">&larr;</span> Go back</a>
-              <h1 class="text-sm">Exam <span class="text-blue-500">#</span><span class="text-blue-500" th:text="${question.id}">123</span></h1>
+              <h1 class="text-sm">Exam <span class="text-blue-500">#</span><span class="text-blue-500" th:text="${question.exam.id}">123</span></h1>
               <h1 class="text-3xl">Question <span class="text-blue-500">#</span><span class="text-blue-500" th:text="${question.id}">123</span></h1>
-              <form method="post" class="mx-auto mt-8 p-4 border rounded-lg shadow-md">
+              <form th:action="@{'/teacher/questions/' + ${question.id} + '/edit'}" th:method="post" class="mx-auto mt-8 p-4 border rounded-lg shadow-md">
                 <h3 class="text-lg mb-4">Edit Question</h3>
                 
                 <label for="question" class="block text-sm font-medium text-gray-700">Question:</label>
-                <textarea id="question" placeholder="Enter question here..." class="block mt-2 w-full placeholder-gray-400/70 rounded-lg border border-gray-300 bg-white px-4 h-32 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">What is the capital of France?</textarea>
+                <textarea name="content" th:text="${question.content}" id="question" placeholder="Enter question here..." class="block mt-2 w-full placeholder-gray-400/70 rounded-lg border border-gray-300 bg-white px-4 h-32 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40">What is the capital of France?</textarea>
             
                 <fieldset class="mt-4">
                     <legend class="block text-sm font-medium text-gray-700">Options:</legend>
                     <div class="grid grid-cols-1 gap-4 mt-2">
                         <div class="flex items-center">
-                            <input type="text" id="optionA" name="optionA" placeholder="Option A" value="Berlin" class="border rounded-lg px-2 py-1 w-full"/>
-                            <input type="radio" id="correctA" name="correctAnswer" value="optionA" class="ml-2"/>
+                            <input type="text" id="optionA" name="option1" placeholder="Option A" th:value="${question.option1}" class="border rounded-lg px-2 py-1 w-full"/>
+                            <input type="radio" id="correctA" name="correctAnswer" th:checked="${question.correctAnswer == 1}" value="1" class="ml-2"/>
                         </div>
                         <div class="flex items-center">
-                            <input type="text" id="optionB" name="optionB" placeholder="Option B" value="Madrid" class="border rounded-lg px-2 py-1 w-full"/>
-                            <input type="radio" id="correctB" name="correctAnswer" value="optionB" class="ml-2"/>
+                            <input type="text" id="optionB" name="option2" placeholder="Option B" th:value="${question.option2}" class="border rounded-lg px-2 py-1 w-full"/>
+                            <input type="radio" id="correctB" name="correctAnswer" th:checked="${question.correctAnswer == 2}" value="2" class="ml-2"/>
                         </div>
                         <div class="flex items-center">
-                            <input type="text" id="optionC" name="optionC" placeholder="Option C" value="Paris" class="border rounded-lg px-2 py-1 w-full"/>
-                            <input type="radio" id="correctC" name="correctAnswer" value="optionC" class="ml-2" checked/>
+                            <input type="text" id="optionC" name="option3" placeholder="Option C" th:value="${question.option3}" class="border rounded-lg px-2 py-1 w-full"/>
+                            <input type="radio" id="correctC" name="correctAnswer" th:checked="${question.correctAnswer == 3}" value="3" class="ml-2"/>
                         </div>
                         <div class="flex items-center">
-                            <input type="text" id="optionD" name="optionD" placeholder="Option D" value="Rome" class="border rounded-lg px-2 py-1 w-full"/>
-                            <input type="radio" id="correctD" name="correctAnswer" value="optionD" class="ml-2"/>
+                            <input type="text" id="optionD" name="option4" placeholder="Option D" th:value="${question.option4}" class="border rounded-lg px-2 py-1 w-full"/>
+                            <input type="radio" id="correctD" name="correctAnswer" th:checked="${question.correctAnswer == 4}" value="4" class="ml-2"/>
                         </div>
                     </div>
                 </fieldset>
             
                 <div class="flex justify-between mt-6">
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 focus:ring-4 ring-blue-400">Save</button>
-                    <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 focus:ring-4 ring-red-400">Delete</button>
+                    <a th:href="@{'/teacher/questions/' + ${question.id} + '/delete'}">
+                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 focus:ring-4 ring-red-400">Delete</button>
+                    </a>
                 </div>
               </form>
             </main>

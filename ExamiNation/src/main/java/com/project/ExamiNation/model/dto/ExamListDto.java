@@ -46,4 +46,12 @@ public class ExamListDto {
       this.createdAt = createdAt;
     }
 
+    public ExamListDto(Long id, String title, String status, double weight, Date createdAt) {
+      this.id = id;
+      this.title = title;
+      this.status = status;
+      this.weight = weight;
+      this.createdAt = createdAt;
+    }
+
 }

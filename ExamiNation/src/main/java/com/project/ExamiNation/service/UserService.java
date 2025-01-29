@@ -20,18 +20,20 @@ public class UserService implements UserDetailsService {
   private UserRepository userRepository;
 
   public User getCurrentUser() {
-    // Get the authentication object
+    // Get the authentication object from Spring Security context
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
-    if (authentication != null && authentication.isAuthenticated()) {
-        // Get the email of the currently logged-in user
-        String email = authentication.getName();
-        // Load the user from the database using the email
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        return optionalUser.orElse(null); // Return the user if present, otherwise return null
+    if (authentication == null || !authentication.isAuthenticated()) {
+        throw new UsernameNotFoundException("No authenticated user found");
     }
-    return null;
-}
+
+    // Extract the email from the authentication principal
+    String email = authentication.getName();
+
+    // Fetch the user from your database
+    return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
+    }
 
   // Create or Update
   public User saveUser(User user) {
