@@ -1,5 +1,7 @@
 package com.project.ExamiNation.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -45,10 +47,9 @@ public class AuthController {
       result.addError(new FieldError("registerDto", "confirmPassword", "Password and confirm password do not match"));
     }
 
-    User user = userRepository.findByUsername(registerDto.getUsername());
-
-    if(user != null) {
-      result.addError(new FieldError("registerDto", "username", "Username already exists"));
+    Optional<User> existingUser = userRepository.findByUsername(registerDto.getUsername());
+    if (existingUser.isPresent()) {
+        result.addError(new FieldError("registerDto", "username", "Username already exists"));
     }
 
     if(result.hasErrors()){

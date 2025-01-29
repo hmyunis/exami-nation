@@ -39,6 +39,8 @@
    ```
 
 2. **Backend Setup**
+   - Create a MySQL database and edit the credentials in `application.properties`
+
    - Navigate to the backend directory:
      ```bash
      cd backend

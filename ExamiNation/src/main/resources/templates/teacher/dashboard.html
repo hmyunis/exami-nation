@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: headTag(title='Dashboard')}"></head>
+
+    <body>
+        <!-- Use the fragment and pass HTML as 'content' -->
+        <div th:replace="~{fragments/layout :: pageLayout(content=~{:: #myContent}, active='dashboard')}"></div>
+
+        <!-- Define the HTML block to pass -->
+        <div style="display: none">
+            <main id="myContent" class="space-y-4">
+                <div class="border-2 border-dashed p-4 rounded-xl border-gray-300">
+                  <h1 class="text-2xl"><span class="bg-green-500 inline-block size-2 -mt-1 rounded-full self-center align-middle"></span> Live Exams</h1>
+                  <article th:each="exam : ${liveExams}" class="grid grid-cols-2 gap-16 mt-6">
+                    <section class="bg-white rounded-lg shadow-md">
+                        <header class="p-4 bg-gradient-to-br from-blue-500 to-blue-700 rounded-t-lg">
+                          <h2 class="text-xl text-white" th:text="${exam.title}">Mid Term Exam</h2>
+                        </header>
+                        <div class="p-4">
+                            <p class="text-gray-600" th:text="${exam.description}">This exam will cover the chapters 1, 2 and 3.</p>
+                            <p class="text-sm text-gray-500 mt-2">Date: <span th:text="${exam.createdAt}">12/12/2025 11:00 AM</span></p>
+                            <table class="w-full mt-4">
+                                <tbody>
+                                    <tr>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Questions:</span>
+                                            <span class="text-lg font-semibold text-gray-800">20</span>
+                                        </td>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Duration:</span>
+                                            <span class="text-lg font-semibold text-gray-800">30 min</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Start time:</span>
+                                            <span class="text-lg font-semibold text-gray-800">12:00</span>
+                                        </td>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">End time:</span>
+                                            <span class="text-lg font-semibold text-gray-800">12:30</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Weight:</span>
+                                            <span class="text-lg font-semibold text-green-500"><span th:text="${exam.weight}">20</span>%</span>
+                                        </td>
+                                        <td></td>
+                                        <td class="py-2">
+                                            <div class="flex items-center space-x-2">
+                                                <button class="py-2 px-6 text-white bg-blue-500 hover:bg-blue-400 rounded-full">Edit exam</button>
+                                                <button class="py-2 px-6 text-white bg-red-500 hover:bg-red-400 rounded-full">Stop exam</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    
+                    
+                  </article>
+              </div>
+              <div class="border-2 border-dashed p-4 rounded-xl border-gray-300">
+                  <h1 class="text-2xl">Drafts</h1>
+                  <article th:each="exam : ${draftExams}" class="grid grid-cols-2 gap-16 mt-6">
+                    <section class="bg-white rounded-lg shadow-md">
+                        <header class="p-4 bg-gradient-to-br from-blue-500 to-blue-700 rounded-t-lg">
+                          <h2 class="text-xl text-white" th:text="${exam.title}">Final Exam</h2>
+                        </header>
+                        <div class="p-4">
+                            <p class="text-gray-600" th:text="${exam.description}">This exam will cover the chapters 4, 5 and 6.</p>
+                            <p class="text-sm text-gray-500 mt-2">Created at: <span th:text="${exam.createdAt}">12/12/2025 11:00 AM</span></p>
+                            <table class="w-full mt-4">
+                                <tbody>
+                                    <tr>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Questions:</span>
+                                            <span class="text-lg font-semibold text-gray-800">20</span>
+                                        </td>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Duration:</span>
+                                            <span class="text-lg font-semibold text-gray-800">30 min</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Start time:</span>
+                                            <span class="text-lg font-semibold text-gray-800">12:00</span>
+                                        </td>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">End time:</span>
+                                            <span class="text-lg font-semibold text-gray-800">12:30</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2">
+                                            <span class="text-sm text-gray-500">Weight:</span>
+                                            <span class="text-lg font-semibold text-green-500">40%</span>
+                                        </td>
+                                        <td></td>
+                                        <td class="py-2">
+                                            <div class="flex items-center space-x-2">
+                                                <button class="py-2 px-6 text-white bg-blue-500 hover:bg-blue-400 rounded-full">Edit exam</button>
+                                                <button class="py-2 px-6 text-white bg-green-500 hover:bg-green-400 rounded-full">Publish exam</button>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                      </section>
+                  </article>
+              </div>
+            </main>
+        </div>
+    </body>
+</html>
