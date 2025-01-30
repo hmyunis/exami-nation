@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.ExamiNation.model.Exam;
+import com.project.ExamiNation.model.ExamSession;
 import com.project.ExamiNation.model.Question;
 import com.project.ExamiNation.model.User;
+import com.project.ExamiNation.model.dto.DashboardExamSessionDto;
 import com.project.ExamiNation.model.dto.ExamDetailDto;
 import com.project.ExamiNation.model.dto.ExamListDto;
 import com.project.ExamiNation.model.dto.StudentListDto;
 import com.project.ExamiNation.service.ExamService;
+import com.project.ExamiNation.service.ExamSessionService;
 import com.project.ExamiNation.service.QuestionService;
 import com.project.ExamiNation.service.UserService;
 
@@ -35,12 +38,74 @@ public class TeacherController {
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private ExamSessionService examSessionService;
   
   @GetMapping("/dashboard")
   public String dashboard(Model model) {
-    List<Exam> publishedExams = examService.getExamsByStatus("PUBLISHED");
-    model.addAttribute("liveExams", publishedExams);
+    List<ExamSession> openExamSessions = examSessionService.getExamSessionsByStatus("OPEN");
+    List<ExamSession> closedExamSessions = examSessionService.getExamSessionsByStatus("CLOSED");
+
+    List<DashboardExamSessionDto> openExamSessionsDtos = new ArrayList<DashboardExamSessionDto>();
+    for (int i = 0; i < openExamSessions.size(); i++) {
+      ExamSession examSession = openExamSessions.get(i);
+      DashboardExamSessionDto dashboardExamSessionDto = new DashboardExamSessionDto(examSession.getId(), examSession.getExam(), examSession.getParticipants(), examSession.getDuration(), examSession.getStatus(), examSession.getStartTime());
+      dashboardExamSessionDto.setExamDate(java.time.LocalDate.from(examSession.getStartTime().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()));
+      dashboardExamSessionDto.setEndTime(dashboardExamSessionDto.getStartTime().plusMinutes(examSession.getDuration()));
+
+      List<Question> questions = questionService.getQuestionsByExamId(examSession.getExam().getId());
+      dashboardExamSessionDto.setTotalQuestions(questions.size());
+
+      openExamSessionsDtos.add(dashboardExamSessionDto);
+    }
+
+    List<DashboardExamSessionDto> closedExamSessionsDtos = new ArrayList<DashboardExamSessionDto>();
+    for (int i = 0; i < closedExamSessions.size(); i++) {
+      ExamSession examSession = closedExamSessions.get(i);
+      DashboardExamSessionDto dashboardExamSessionDto = new DashboardExamSessionDto(examSession.getId(), examSession.getExam(), examSession.getParticipants(), examSession.getDuration(), examSession.getStatus(), examSession.getStartTime());
+      dashboardExamSessionDto.setExamDate(java.time.LocalDate.from(examSession.getStartTime().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()));
+      dashboardExamSessionDto.setEndTime(dashboardExamSessionDto.getStartTime().plusMinutes(examSession.getDuration()));
+
+      List<Question> questions = questionService.getQuestionsByExamId(examSession.getExam().getId());
+      dashboardExamSessionDto.setTotalQuestions(questions.size());
+
+      closedExamSessionsDtos.add(dashboardExamSessionDto);
+    }
+
+    List<Exam> exams = examService.getAllExams();
+
+    model.addAttribute("allExams", exams);
+    model.addAttribute("liveExamSessions", openExamSessionsDtos);
+    model.addAttribute("closedExamSessions", closedExamSessionsDtos);
     return "teacher/dashboard";
+  }
+
+  @PostMapping("/exam-sessions/create")
+  public String createExamSession(Model model,
+        @RequestParam ("examId") Long examId,
+        @RequestParam ("duration") int duration,
+        @RequestParam ("status") String status,
+        @RequestParam ("startTime") String formDatetime
+    ) {
+    java.util.Date startTime = java.util.Date.from(java.time.LocalDateTime.parse(formDatetime, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
+    .atZone(java.time.ZoneId.systemDefault())
+    .toInstant());
+
+    ExamSession examSession = new ExamSession();
+    examSession.setExam(examService.getExamById(examId).get());
+    examSession.setDuration(duration);
+    examSession.setStatus(status);
+    examSession.setStartTime(startTime);
+    examSession.setParticipants(new ArrayList<>());
+    examSessionService.createExamSession(examSession);
+    return "redirect:/teacher/dashboard";
+  }
+
+  @PostMapping("/exam-sessions/{examSessionId}/terminate")
+  public String terminateExamSession(@PathVariable Long examSessionId) {
+    examSessionService.updateStatusById(examSessionId, "CLOSED");
+    return "redirect:/teacher/dashboard";
   }
 
   @GetMapping("/exams")
