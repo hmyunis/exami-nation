@@ -9,8 +9,67 @@
         <!-- Define the HTML block to pass -->
         <div style="display: none">
             <main id="myContent">
-              <h1 class="text-3xl">History</h1>
+                <h1 class="text-3xl mb-4">Exam Sessions</h1>
+                <div class="relative my-4 mt-6">
+                    <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                    </div>
+                    <input type="text" id="search" onkeyup="searchTable()" placeholder="Search by exam title" class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="relative overflow-x-auto mb-4 shadow-md sm:rounded-lg">
+                    
+                  <table class="w-full text-sm text-left text-gray-500">
+                      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                          <tr>
+                              <th scope="col" class="px-6 py-3">Session ID</th>
+                              <th scope="col" class="px-6 py-3">Exam Title</th>
+                              <th scope="col" class="px-6 py-3">Start Time</th>
+                              <th scope="col" class="px-6 py-3">Duration</th>
+                              <th scope="col" class="px-6 py-3">Status</th>
+                              <th scope="col" class="px-6 py-3">Participants</th>
+                              <th scope="col" class="px-6 py-3">Weight</th>
+                              <th scope="col" class="px-6 py-3">Average Score</th>
+                              <th scope="col" class="px-6 py-3">Highest Score</th>
+                              <th scope="col" class="px-6 py-3">Lowest Score</th>
+                              <th scope="col" class="px-6 py-3">Total Questions</th>
+                          </tr>
+                      </thead>
+                      <tbody id="reportTable" th:each="examSession : ${examSessions}">
+                          <tr class="bg-white border-b hover:bg-gray-50">
+                            <td th:text="${examSession.id}" class="px-6 py-4">1</td>
+                            <td th:text="${examSession.examTitle}" class="px-6 py-4">Mid Term Exam</td>
+                            <td th:text="${examSession.startTime}" class="px-6 py-4">2025-06-01 08:00</td>
+                            <td class="px-6 py-4"><span th:text="${examSession.duration}"></span> min</td>
+                            <td th:text="${examSession.status}" th:classappend="${examSession.status == 'OPEN' ? 'text-green-600' : 'text-red-600'}" class="px-6 py-4">OPEN</td>
+                            <td th:text="${examSession.participants}" class="px-6 py-4">10</td>
+                            <td class="px-6 py-4 font-medium text-blue-700"><span th:text="${examSession.weight}"></span>%</td>
+                            <td th:text="${examSession.averageScore}" class="px-6 py-4">80.00</td>
+                            <td th:text="${examSession.highestScore}" class="px-6 py-4">95</td>
+                            <td th:text="${examSession.lowestScore}" class="px-6 py-4">75</td>
+                            <td th:text="${examSession.totalQuestions}" class="px-6 py-4">100</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <script>
+                function searchTable() {
+                    const input = document.getElementById('search');
+                    const filter = input.value.toLowerCase();
+                    const rows = document.querySelectorAll('#reportTable tr');
             
+                    rows.forEach(row => {
+                        const examTitle = row.cells[1].textContent.toLowerCase();
+                        if (examTitle.includes(filter)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                }
+            </script>
             </main>
         </div>
     </body>

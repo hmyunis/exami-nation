@@ -1,5 +1,7 @@
 package com.project.ExamiNation.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import com.project.ExamiNation.model.StudentAnswer;
 import com.project.ExamiNation.model.User;
 import com.project.ExamiNation.model.dto.DashboardExamSessionDto;
 import com.project.ExamiNation.model.dto.ExamSubmissionDto;
+import com.project.ExamiNation.model.dto.ResultHistoryDto;
 import com.project.ExamiNation.service.ExamResultService;
 import com.project.ExamiNation.service.ExamSessionService;
 import com.project.ExamiNation.service.QuestionService;
@@ -139,11 +142,37 @@ public class StudentController {
 
       return ResponseEntity.ok("Exam submitted successfully!");
   }
-  
-
 
   @GetMapping("/history")
   public String history(Model model) {
+    User user = userService.getCurrentUser();
+    List<ExamResult> results = examResultService.getResultsByStudent(user.getId());
+    
+    List<ResultHistoryDto> resultHistoryDtos = new ArrayList<ResultHistoryDto>();
+    for (ExamResult result : results) {
+      ResultHistoryDto resultHistoryDto = new ResultHistoryDto();
+      resultHistoryDto.setId(result.getExamSession().getId());
+      resultHistoryDto.setYourScore(new BigDecimal(result.getScore()).setScale(2, RoundingMode.HALF_UP).doubleValue());
+      resultHistoryDto.setTotalQuestions(result.getExamSession().getExam().getQuestions().size());
+      resultHistoryDto.setStartTime(result.getExamSession().getStartTime());
+      resultHistoryDto.setDuration(result.getExamSession().getDuration());
+      resultHistoryDto.setStatus(result.getExamSession().getStatus());
+      resultHistoryDto.setExamTitle(result.getExamSession().getExam().getTitle());
+      resultHistoryDto.setWeight(result.getExamSession().getExam().getWeight());
+
+      int correctAnswers = 0;
+      for (StudentAnswer answer : studentAnswerService.getAnswersByExamSessionAndStudent(result.getExamSession().getId(), user.getId())) {
+        if (answer.getQuestion().getCorrectAnswer() == answer.getSelectedAnswer()) {
+          correctAnswers++;
+        }
+      }
+      resultHistoryDto.setCorrectAnswers(correctAnswers);
+      
+      resultHistoryDtos.add(resultHistoryDto);
+    }
+    
+    model.addAttribute("sessionResults", resultHistoryDtos);
+    
     return "student/history";
   }
 

@@ -1,5 +1,7 @@
 package com.project.ExamiNation.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,7 @@ import com.project.ExamiNation.model.User;
 import com.project.ExamiNation.model.dto.DashboardExamSessionDto;
 import com.project.ExamiNation.model.dto.ExamDetailDto;
 import com.project.ExamiNation.model.dto.ExamListDto;
+import com.project.ExamiNation.model.dto.SessionHistoryDto;
 import com.project.ExamiNation.model.dto.StudentListDto;
 import com.project.ExamiNation.service.ExamResultService;
 import com.project.ExamiNation.service.ExamService;
@@ -333,6 +336,53 @@ public class TeacherController {
 
   @GetMapping("/history")
   public String history(Model model) {
+    List<ExamSession> examSessions = examSessionService.getAllExamSessions();
+
+    List<SessionHistoryDto> dtos = new ArrayList<SessionHistoryDto>();
+    for (int i = 0; i < examSessions.size(); i++) {
+      ExamSession examSession = examSessions.get(i);
+      SessionHistoryDto dto = new SessionHistoryDto();
+      dto.setId(examSession.getId());
+      dto.setExamTitle(examSession.getExam().getTitle());
+      dto.setStartTime(examSession.getStartTime());
+      dto.setDuration(examSession.getDuration());
+      dto.setStatus(examSession.getStatus());
+      dto.setParticipants(examSession.getParticipants().size());
+      dto.setWeight(examSession.getExam().getWeight());
+      
+      List<Question> questions = questionService.getQuestionsByExamId(examSession.getExam().getId());
+      dto.setTotalQuestions(questions.size());
+
+      List<ExamResult> examResults = examResultService.getResultsByExamSession(examSession.getId());
+      double totalScore = 0;
+      double highestScore = 0;
+      double lowestScore = 0;
+      for (int j = 0; j < examResults.size(); j++) {
+        totalScore += examResults.get(j).getScore();
+        if (examResults.get(j).getScore() > highestScore) {
+          highestScore = examResults.get(j).getScore();
+        }
+        if (examResults.get(j).getScore() < lowestScore) {
+          lowestScore = examResults.get(j).getScore();
+        }
+      }
+
+      // check zero over zero case
+      if (examResults.size() > 0) {
+        dto.setAverageScore(new BigDecimal(totalScore / examResults.size()).setScale(2, RoundingMode.HALF_UP).doubleValue());
+        dto.setHighestScore(new BigDecimal(highestScore).setScale(2, RoundingMode.HALF_UP).doubleValue());
+        dto.setLowestScore(new BigDecimal(lowestScore).setScale(2, RoundingMode.HALF_UP).doubleValue());
+      } else {
+        dto.setAverageScore(0);
+        dto.setHighestScore(0);
+        dto.setLowestScore(0);
+      }
+
+      dtos.add(dto);
+    }
+
+    model.addAttribute("examSessions", dtos);
+    
     return "teacher/history";
   }
 
