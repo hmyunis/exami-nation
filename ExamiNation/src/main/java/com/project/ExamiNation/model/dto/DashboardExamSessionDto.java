@@ -21,6 +21,17 @@ public class DashboardExamSessionDto {
   private LocalDate examDate;
   private LocalTime endTime;
 
+  // nullable
+  private boolean isParticipant;
+
+  public boolean isParticipant() {
+    return isParticipant;
+  }
+
+  public void setIsParticipant(boolean isParticipant) {
+    this.isParticipant = isParticipant;
+  }
+
   public DashboardExamSessionDto(Long id, Exam exam, List<User> participants, int duration, String status, Date startTime) {
     this.id = id;
     this.exam = exam;

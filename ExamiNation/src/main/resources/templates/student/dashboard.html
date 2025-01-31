@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: headTag(title='Dashboard')}"></head>
+
+    <body>
+        <!-- Use the fragment and pass HTML as 'content' -->
+        <div th:replace="~{fragments/student-layout :: studentPageLayout(content=~{:: #myStudentContent}, active='dashboard')}"></div>
+
+        <!-- Define the HTML block to pass -->
+        <div style="display: none">
+            <main id="myStudentContent">
+              <div class="border-2 border-dashed p-4 rounded-xl border-gray-300">
+                <h1 class="text-2xl"><span class="bg-green-500 inline-block size-2 -mt-1 rounded-full self-center align-middle"></span> Live Exam Sessions</h1>
+                <article class="grid grid-cols-2 gap-8 mt-6">
+                  <section th:each="examSession : ${liveExamSessions}" class="bg-white rounded-lg shadow-md">
+                      <header class="p-4 bg-gradient-to-br from-sky-500 to-sky-700 rounded-t-lg">
+                        <h2 class="text-xl text-white" th:text="${examSession.exam.title}">Mid Term Exam</h2>
+                      </header>
+                      <div class="p-4">
+                          <p class="text-gray-600" th:text="${examSession.exam.description}">This exam will cover the chapters 1, 2 and 3.</p>
+                          <p class="text-sm text-gray-500 mt-2">Date: <span th:text="${examSession.examDate}">12/12/2025 11:00 AM</span></p>
+                          <table class="w-full mt-4">
+                              <tbody>
+                                  <tr>
+                                      <td class="py-2">
+                                          <span class="text-sm text-gray-500">Session ID:</span>
+                                          <span th:text="${examSession.id}" class="text-lg font-mono font-semibold text-gray-800">123</span>
+                                      </td>
+                                      <td class="py-2">
+                                          <span class="text-sm text-gray-500">Participants:</span>
+                                          <span th:text="${examSession.participants.size()}" class="text-lg font-semibold text-gray-800">20</span>
+                                      </td>
+                                      <td class="py-2">
+                                          <span class="text-sm text-gray-500">No. Questions:</span>
+                                          <span th:text="${examSession.totalQuestions}" class="text-lg font-semibold text-gray-800">30</span>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td class="py-2">
+                                          <span class="text-sm text-gray-500">Start time:</span>
+                                          <span th:text="${examSession.startTime}" class="text-lg font-semibold text-gray-800">12:00</span>
+                                      </td>
+                                      <td class="py-2">
+                                          <span class="text-sm text-gray-500">End time:</span>
+                                          <span th:text="${examSession.endTime}" class="text-lg font-semibold text-gray-800">12:30</span>
+                                      </td>
+                                      <td class="py-2">
+                                          <span class="text-sm text-gray-500">Duration:</span>
+                                          <span class="text-lg font-semibold text-gray-800"><span th:text="${examSession.duration}">30</span> min</span>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                          <div class="flex justify-between mt-2">
+                              <div class="py-2">
+                                  <span class="text-sm text-gray-500">Weight:</span>
+                                  <span class="text-lg font-semibold text-green-500"><span th:text="${examSession.exam.weight}">20</span>%</span>
+                              </div>
+                              <div class="py-2">
+                                <form th:action="@{'/student/exam-sessions/' + ${examSession.id} + '/join/' + ${student.id}}" method="post">
+                                    <button
+                                        type="submit"
+                                        th:text="${examSession.isParticipant} ? 'Continue' : 'Join Now'"
+                                        th:classappend="${examSession.isParticipant} ? 'bg-blue-600 hover:bg-blue-500' : 'bg-lime-500 hover:bg-lime-400'"
+                                        class="py-2 px-6 text-white rounded-full">
+                                        Start Exam
+                                    </button>
+                                </form>
+                              </div>
+                          </div>
+                      </div>
+                  </section>
+                  
+                  
+                </article>
+              </div>
+            </main>
+        </div>
+    </body>
+</html>

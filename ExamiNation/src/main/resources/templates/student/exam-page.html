@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: headTag(title='Exam Page')}"></head>
+
+    <body>
+        <div th:replace="~{fragments/student-layout :: studentPageLayout(content=~{:: #myStudentContent}, active='')}"></div>
+
+        <div style="display: none">
+            <main id="myStudentContent">
+              <div th:if="${questions.size() == 0}" class="flex flex-col text-center justify-center items-center h-screen">
+                <div class="-mt-36">
+                    <h2 class="text-9xl text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                            <path fill="#828282" d="M58.9 42.1c3-6.1 9.6-9.6 16.3-8.7L320 64 564.8 33.4c6.7-.8 13.3 2.7 16.3 8.7l41.7 83.4c9 17.9-.6 39.6-19.8 45.1L439.6 217.3c-13.9 4-28.8-1.9-36.2-14.3L320 64 236.6 203c-7.4 12.4-22.3 18.3-36.2 14.3L37.1 170.6c-19.3-5.5-28.8-27.2-19.8-45.1L58.9 42.1zM321.1 128l54.9 91.4c14.9 24.8 44.6 36.6 72.5 28.6L576 211.6l0 167c0 22-15 41.2-36.4 46.6l-204.1 51c-10.2 2.6-20.9 2.6-31 0l-204.1-51C79 419.7 64 400.5 64 378.5l0-167L191.6 248c27.8 8 57.6-3.8 72.5-28.6L318.9 128l2.2 0z"/>
+                        </svg>
+                    </h2>
+                    <h1 class="text-3xl text-gray-500">No questions found</h1>
+                    <a th:href="@{'/student/dashboard'}" class="block mt-4">
+                        <button class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-500">Go back</button>
+                    </a>
+                </div>
+            </div>
+            <div th:if="${questions.size() > 0}">
+                <!-- Attempted Questions Count -->
+                <div class="text-left">
+                    Attempted Questions: 
+                    <span id="attempted-count" class="text-2xl font-bold text-blue-600">0</span>
+                    /
+                    <span th:text="${questions.size()}">30</span>
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="text-right mb-4">
+                    Time left:
+                    <span id="countdown-timer" class="text-2xl font-bold text-red-600">
+                        MM:SS
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl">Exam <span class="text-blue-500">#</span><span th:text="${questions[0].exam.id}" class="text-blue-500">123</span></h1>
+                        <h2 class="font-light text-lg text-gray-500" th:text="${questions[0].exam.title}"></h2>
+                    </div>
+                    <button onclick="handleFinishExam()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-500 h-fit">
+                        Finish Exam
+                    </button>
+                </div>
+                <section class="border-2 border-gray-400 my-8 p-4 rounded-lg">
+                  <h2 class="text-lg text-gray-400 font-mono bg-white -mt-8 w-fit px-4">Questions (<span th:text="${questions.size()}">30</span>)</h2>
+                  <article>
+                    <div th:each="question, iterStat : ${questions}" 
+                         class="bg-gradient-to-br from-gray-50 border border-gray-300 to-gray-100 rounded-xl p-4 flex justify-between items-start gap-4 mt-4"
+                         data-question-id="${question.id}">
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h3 class="text-lg">Question 
+                                    <span th:text="${iterStat.count}"></span>
+                                </h3>
+                                <h4 class="text-xs text-gray-400" 
+                                    th:id="'responseStatus_' + ${question.id}"
+                                    style="display: none">Response cached.</h4>    
+                            </div>
+                            <p class="text-gray-500" th:text="${question.content}"></p>
+                            <form>
+                                <div class="grid grid-cols-2 gap-4 mt-4">
+                                    <div th:each="opt : ${#numbers.sequence(1,4)}">
+                                        <input type="radio"
+                                               required
+                                               th:name="'selectedAnswer_' + ${question.id}"
+                                               th:value="${opt}"
+                                               th:id="'option_${question.id}_' + ${opt}"
+                                               th:onchange="|handleAnswerChange('${question.id}', this.value); updateAttemptedCount();|">
+                                        <label th:text="${question['option' + opt]}">
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                  </article>
+                </section>
+                <script th:inline="javascript">
+                    // Timer initialization
+                    const endTimeMillis = /*[[${endTime.time}]]*/ 0;  // Get epoch millis from Date
+                    let timerInterval;
+
+                    function updateTimer() {
+                        const now = Date.now();
+                        let remaining = endTimeMillis - now;
+
+                        if(remaining <= 0) {
+                            clearInterval(timerInterval);
+                            document.getElementById('countdown-timer').textContent = '00:00';
+                            return;
+                        }
+
+                        const minutes = Math.floor(remaining / 60000);
+                        const seconds = Math.floor((remaining % 60000) / 1000);
+                        
+                        document.getElementById('countdown-timer').textContent = 
+                            `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    }
+
+                    function updateAttemptedCount() {
+                        // Count the number of checked radio buttons
+                        const attemptedCount = document.querySelectorAll('input[type="radio"]:checked').length;
+                        document.getElementById('attempted-count').textContent = attemptedCount;
+                    }
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Initialize timer
+                        timerInterval = setInterval(updateTimer, 1000);
+                        updateTimer();
+
+                        // Initialize storage with null values
+                        let answers = JSON.parse(localStorage.getItem('examAnswers') || '{}');
+                        const questionIds = Array.from(document.querySelectorAll('[data-question-id]'))
+                                               .map(el => el.dataset.questionId);
+                        
+                        // Initialize missing questions with null
+                        questionIds.forEach(id => {
+                            if (!answers.hasOwnProperty(id)) {
+                                answers[id] = null;
+                            }
+                        });
+                        localStorage.setItem('examAnswers', JSON.stringify(answers));
+                        
+                        // Restore previous selections and update indicators
+                        questionIds.forEach(id => {
+                            const selectedValue = answers[id];
+                            const statusElement = document.getElementById(`responseStatus_${id}`);
+                            
+                            if (selectedValue !== null) {
+                                document.querySelector(`input[name='selectedAnswer_${id}'][value='${selectedValue}']`).checked = true;
+                                statusElement.style.display = 'block';
+                                statusElement.style.color = '#16a34a'; // green-600
+                            }
+                        });
+
+                        // Update attempted questions count on page load
+                        updateAttemptedCount();
+                    });
+
+                    function handleAnswerChange(questionId, answer) {
+                        const answers = JSON.parse(localStorage.getItem('examAnswers') || '{}');
+                        answers[questionId] = parseInt(answer);
+                        localStorage.setItem('examAnswers', JSON.stringify(answers));
+                        
+                        const statusElement = document.getElementById(`responseStatus_${questionId}`);
+                        statusElement.style.display = 'block';
+                        statusElement.style.color = '#16a34a';
+                        console.log('Updated storage:', answers);
+                    }
+
+                    function handleFinishExam() {
+                        const answers = JSON.parse(localStorage.getItem('examAnswers') || '{}');
+                        const examSessionId = /*[[${examSessionId}]]*/ '123';
+                        
+                        // Structure data for API submission
+                        const submissionData = {
+                            examSessionId: examSessionId,
+                            answers: Object.entries(answers).map(([qId, ans]) => ({
+                                questionId: parseInt(qId),
+                                selectedAnswer: ans
+                            }))
+                        };
+
+                        console.log('Submission payload:', submissionData);
+                        localStorage.removeItem('examAnswers');
+                        
+                        // Send data to the backend
+                        fetch('/student/exam/submit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': /*[[${_csrf.token}]]*/ '123',
+                                'X-CSRF-HEADER': /*[[${_csrf.headerName}]]*/ '123'
+                            },
+                            body: JSON.stringify(submissionData)
+                        })
+                        .then(response => {
+                            console.log('Submission successful:', response);
+                            alert('Exam submitted successfully!');
+                            window.location.href = '/student/dashboard'; // Redirect to dashboard
+                        })
+                        .catch(error => {
+                            console.error('Error submitting exam:', error);
+                            alert('Failed to submit exam. Error: ' + error.message);
+                        });
+                    }
+                </script>
+              </div>
+            </main>
+        </div>
+    </body>
+</html>

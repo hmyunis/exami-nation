@@ -11,20 +11,35 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-  @Bean
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-              .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/").permitAll()
-              .requestMatchers("/register").permitAll()
-              .requestMatchers("/login").permitAll()
-              .requestMatchers("/logout").permitAll()
-              .anyRequest().authenticated())
-              .formLogin(form -> form
-              .loginPage("/login")
-              .defaultSuccessUrl("/dashboard", true))
-              .logout(config -> config.logoutSuccessUrl("/"))
-              .build();
+            .authorizeHttpRequests(auth -> auth
+                // Public routes
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/register").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/logout").permitAll()
+
+                // Role-based access
+                .requestMatchers("/teacher/**").hasRole("TEACHER") // Only TEACHER can access /teacher/**
+                .requestMatchers("/student/**").hasRole("STUDENT") // Only STUDENT can access /student/**
+
+                // Authenticated routes (any authenticated user)
+                .requestMatchers("/dashboard").authenticated()
+
+                // Deny all other requests
+                .anyRequest().denyAll()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/dashboard", true)
+            )
+            .logout(config -> config
+                .logoutSuccessUrl("/")
+            )
+            .build();
     }
 
     @Bean

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: headTag(title='Setting')}"></head>
+
+    <body>
+        <!-- Use the fragment and pass HTML as 'content' -->
+        <div th:replace="~{fragments/student-layout :: studentPageLayout(content=~{:: #myStudentContent}, active='setting')}"></div>
+
+        <!-- Define the HTML block to pass -->
+        <div style="display: none">
+            <main id="myStudentContent">
+              <h1 class="text-3xl">Setting</h1>
+            
+            </main>
+        </div>
+    </body>
+</html>
