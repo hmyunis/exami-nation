@@ -17,7 +17,6 @@
 - **MySQL**: Relational database for data persistence.
 
 ### Frontend
-- **Bootstrap**: CSS framework for styling and responsive design.
 - **Tailwind CSS**: CSS framework for styling.
 - **HTML5 & CSS3**: For creating views rendered by Thymeleaf.
 
@@ -59,3 +58,11 @@
      ```bash
      http://localhost:8080/
      ```
+
+## Project Members
+
+| **Member** | **Full Name**          | **Student ID** | **GitHub Username** |
+| ---------- | ---------------------- | -------------- | ------------------- |
+| Member 1   | ESTIFANOS TAYE TAMIRAT | UGR/7285/14    | EstifanosTaye320    |
+| Member 2   | HAMDI MOHAMMED YUNIS   | UGR/8929/14    | hmyunis             |
+| Member 3   | MOTI LEGGESE DABESA    | UGR/5389/14    | ldmoti              |
