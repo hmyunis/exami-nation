@@ -52,6 +52,12 @@ public class AuthController {
         result.addError(new FieldError("registerDto", "username", "Username already exists"));
     }
 
+    // also make sure the email is not taken
+    existingUser = userRepository.findByEmail(registerDto.getEmail());
+    if (existingUser.isPresent()) {
+        result.addError(new FieldError("registerDto", "email", "Email already exists"));
+    }
+
     if(result.hasErrors()){
       return "register";
     }

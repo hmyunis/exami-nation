@@ -80,7 +80,7 @@ public class User {
     }
 
     @Column(nullable = false)
-    private String role = "STUDENT"; // Example: "STUDENT", "TEACHER"
+    private String role = "STUDENT"; // "STUDENT", "TEACHER"
 
     @Column(nullable = false)
     private Date dateJoined = new Date();

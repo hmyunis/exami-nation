@@ -125,7 +125,7 @@ public class StudentController {
       for (int i = 0; i < submissionData.getAnswers().size() - 1; i++) {
           StudentAnswer studentAnswer = studentAnswerService.getAnswersByExamSessionAndStudent(examSessionId, userService.getCurrentUser().getId()).get(i);
           if (studentAnswer.getQuestion().getCorrectAnswer() == studentAnswer.getSelectedAnswer()) {
-              totalScore ++;
+              totalScore += studentAnswer.getExamSession().getExam().getWeight() / studentAnswer.getQuestion().getExam().getQuestions().size();
           }
       }
 
@@ -149,6 +149,8 @@ public class StudentController {
 
   @GetMapping("/setting")
   public String setting(Model model) {
+    User user = userService.getCurrentUser();
+    model.addAttribute("user", user);
     return "student/setting";
   }
 }

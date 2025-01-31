@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.ExamiNation.model.Exam;
+import com.project.ExamiNation.model.ExamResult;
 import com.project.ExamiNation.model.ExamSession;
 import com.project.ExamiNation.model.Question;
 import com.project.ExamiNation.model.User;
@@ -21,6 +22,7 @@ import com.project.ExamiNation.model.dto.DashboardExamSessionDto;
 import com.project.ExamiNation.model.dto.ExamDetailDto;
 import com.project.ExamiNation.model.dto.ExamListDto;
 import com.project.ExamiNation.model.dto.StudentListDto;
+import com.project.ExamiNation.service.ExamResultService;
 import com.project.ExamiNation.service.ExamService;
 import com.project.ExamiNation.service.ExamSessionService;
 import com.project.ExamiNation.service.QuestionService;
@@ -41,6 +43,9 @@ public class TeacherController {
 
   @Autowired
   private ExamSessionService examSessionService;
+
+  @Autowired
+  private ExamResultService examResultService;
   
   @GetMapping("/dashboard")
   public String dashboard(Model model) {
@@ -305,7 +310,12 @@ public class TeacherController {
       dto.setEmail(students.get(i).getEmail());
       dto.setRole(students.get(i).getRole());
       dto.setDateJoined(students.get(i).getDateJoined());
-      dto.setTotalMarks(85);
+
+      dto.setTotalMarks(0);
+      List<ExamResult> examResult = examResultService.getResultsByStudent(students.get(i).getId());
+      for (int j = 0; j < examResult.size(); j++) {
+        dto.setTotalMarks(dto.getTotalMarks() + examResult.get(j).getScore());
+      }
 
       studentListDto.add(dto);
     }
@@ -328,6 +338,8 @@ public class TeacherController {
 
   @GetMapping("/setting")
   public String setting(Model model) {
+    User user = userService.getCurrentUser();
+    model.addAttribute("user", user);
     return "teacher/setting";
   }
 }

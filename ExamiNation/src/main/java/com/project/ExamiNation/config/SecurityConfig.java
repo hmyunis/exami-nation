@@ -28,6 +28,8 @@ public class SecurityConfig {
 
                 // Authenticated routes (any authenticated user)
                 .requestMatchers("/dashboard").authenticated()
+                .requestMatchers("/setting/profile/update").authenticated()
+                .requestMatchers("/setting/password/update").authenticated()
 
                 // Deny all other requests
                 .anyRequest().denyAll()
